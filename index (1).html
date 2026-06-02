@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="FIFA World Cup 2026 dashboard — schedule, teams, groups, and bracket for the tournament in USA, Canada, and Mexico."/>
+  <title>FIFA World Cup 2026</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- ─── Skip link (accessibility) ─────────────── -->
+<a class="sr-only" href="#main-content">Skip to main content</a>
+
+<!-- ─── Navigation ────────────────────────────── -->
+<nav role="navigation" aria-label="Main navigation">
+  <a href="#" class="nav-logo" onclick="App.nav('home');return false;" aria-label="FIFA World Cup 2026 Home">
+    WC<span>2026</span>
+  </a>
+
+  <div class="nav-links" role="list">
+    <button class="nav-link active" data-page="home"     role="listitem" aria-current="page">Home</button>
+    <button class="nav-link"        data-page="schedule" role="listitem" aria-current="false">Schedule</button>
+    <button class="nav-link"        data-page="teams"    role="listitem" aria-current="false">Teams</button>
+    <button class="nav-link"        data-page="groups"   role="listitem" aria-current="false">Groups</button>
+    <button class="nav-link"        data-page="bracket"  role="listitem" aria-current="false">Bracket</button>
+  </div>
+
+  <div class="nav-search-wrap" role="search">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/>
+      <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    <input type="search" id="global-search" placeholder="Search team…"
+           aria-label="Search — type a team name to view their schedule"/>
+  </div>
+</nav>
+
+<!-- ─── Main content ──────────────────────────── -->
+<main id="main-content">
+
+  <!-- HOME ──────────────────────────────────────── -->
+  <section id="page-home" class="page" aria-label="Home">
+    <div class="hero" role="banner">
+      <h1>FIFA WORLD CUP<br/><span>2026™</span></h1>
+      <p>June 11 – July 19 · USA · Canada · Mexico</p>
+      <div class="hero-stats" aria-label="Tournament facts">
+        <div class="hero-stat"><div class="hero-stat-n">48</div><div class="hero-stat-l">Teams</div></div>
+        <div class="hero-stat"><div class="hero-stat-n">104</div><div class="hero-stat-l">Matches</div></div>
+        <div class="hero-stat"><div class="hero-stat-n">12</div><div class="hero-stat-l">Groups</div></div>
+        <div class="hero-stat"><div class="hero-stat-n">16</div><div class="hero-stat-l">Venues</div></div>
+        <div class="hero-stat"><div class="hero-stat-n">39</div><div class="hero-stat-l">Days</div></div>
+      </div>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="App.nav('schedule')">View Schedule</button>
+        <button class="btn-outline"  onclick="App.nav('bracket')">Bracket</button>
+      </div>
+    </div>
+
+    <div class="section-hdr">
+      <div>
+        <div class="section-title">Upcoming Matches</div>
+        <div class="section-sub">Next fixtures in the tournament</div>
+      </div>
+    </div>
+    <div id="home-matches" class="matches-grid"></div>
+  </section>
+
+  <!-- SCHEDULE ──────────────────────────────────── -->
+  <section id="page-schedule" class="page" hidden aria-label="Full match schedule">
+    <div class="section-hdr">
+      <div>
+        <div class="section-title">Full Schedule</div>
+        <div class="section-sub">104 matches across group stage and knockouts</div>
+      </div>
+    </div>
+
+    <div class="filters-bar" role="search" aria-label="Schedule filters">
+      <input class="filter-input" type="search" id="sched-search"
+             placeholder="Search team or venue…" aria-label="Search matches by team or venue"/>
+
+      <select class="filter-select" id="sched-group" aria-label="Filter by group">
+        <option value="">All groups</option>
+        <!-- Populated by JS -->
+      </select>
+
+      <select class="filter-select" id="sched-stage" aria-label="Filter by stage">
+        <option value="">All stages</option>
+        <option value="Group Stage">Group Stage</option>
+        <option value="Round of 32">Round of 32</option>
+        <option value="Round of 16">Round of 16</option>
+        <option value="Quarterfinal">Quarterfinal</option>
+        <option value="Semifinal">Semifinal</option>
+        <option value="3rd Place">3rd Place</option>
+        <option value="Final">Final</option>
+      </select>
+
+      <button class="sort-btn" id="sort-date-btn" aria-label="Sort by date, toggle ascending/descending">
+        ↑ Date
+      </button>
+    </div>
+
+    <div id="schedule-list" class="matches-grid" role="feed" aria-busy="false"></div>
+  </section>
+
+  <!-- TEAMS ─────────────────────────────────────── -->
+  <section id="page-teams" class="page" hidden aria-label="All 48 teams">
+    <div class="section-hdr">
+      <div>
+        <div class="section-title">48 Teams</div>
+        <div class="section-sub">Click any team to view their match calendar</div>
+      </div>
+    </div>
+
+    <div class="filters-bar" role="search" aria-label="Team filters">
+      <input class="filter-input" type="search" id="teams-search"
+             placeholder="Search team…" aria-label="Search teams"/>
+
+      <select class="filter-select" id="teams-conf" aria-label="Filter by confederation">
+        <option value="">All confederations</option>
+        <option value="UEFA">UEFA</option>
+        <option value="CONMEBOL">CONMEBOL</option>
+        <option value="CONCACAF">CONCACAF</option>
+        <option value="AFC">AFC</option>
+        <option value="CAF">CAF</option>
+        <option value="OFC">OFC</option>
+      </select>
+
+      <select class="filter-select" id="teams-sort" aria-label="Sort teams">
+        <option value="name">A – Z</option>
+        <option value="ranking">FIFA Ranking</option>
+        <option value="conf">Confederation</option>
+      </select>
+    </div>
+
+    <div id="teams-grid" class="teams-grid"></div>
+  </section>
+
+  <!-- GROUPS ────────────────────────────────────── -->
+  <section id="page-groups" class="page" hidden aria-label="Group stage">
+    <div class="section-hdr">
+      <div>
+        <div class="section-title">Group Stage</div>
+        <div class="section-sub">12 groups · Top 2 + 8 best 3rd-place teams advance</div>
+      </div>
+    </div>
+
+    <div class="filters-bar" role="search" aria-label="Groups search">
+      <input class="filter-input" type="search" id="groups-search"
+             placeholder="Search group or team…" aria-label="Search groups"/>
+    </div>
+
+    <div id="groups-grid" class="groups-grid"></div>
+  </section>
+
+  <!-- BRACKET ───────────────────────────────────── -->
+  <section id="page-bracket" class="page" hidden aria-label="Knockout bracket">
+    <div class="section-hdr">
+      <div>
+        <div class="section-title">Knockout Bracket</div>
+        <div class="section-sub">Round of 32 → Final · MetLife Stadium, NY/NJ · July 19</div>
+      </div>
+    </div>
+
+    <div class="bracket-wrapper" tabindex="0" aria-label="Bracket — scroll horizontally to see all rounds">
+      <div id="bracket-inner" class="bracket"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ─── Data ───────────────────────────────────── -->
+<script src="data/teams.js"></script>
+<script src="data/matches.js"></script>
+<script src="data/broadcasters.js"></script>
+
+<!-- ─── App ────────────────────────────────────── -->
+<script src="js/utils.js"></script>
+<script src="js/matchCard.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
