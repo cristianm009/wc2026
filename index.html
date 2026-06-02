@@ -1,190 +1,994 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="description" content="FIFA World Cup 2026 dashboard — schedule, teams, groups, and bracket for the tournament in USA, Canada, and Mexico."/>
-  <title>FIFA World Cup 2026</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="FIFA World Cup 2026 — schedule, teams, groups and bracket"/>
+<title>FIFA World Cup 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E8193C;--red-dk:#B5102B;--gold:#F5A623;
+  --navy:#1A1D23;--bg:#F4F6F9;--surface:#fff;
+  --border:#E2E5EA;--text:#1A1D23;--text2:#5A6070;--text3:#9AA0AE;
+  --green:#1A7A3C;--purple:#6530B5;--blue:#1A5FAB;
+  --r:10px;--rl:14px;--nav:54px;
+  --font:'Barlow',system-ui,sans-serif;
+  --cond:'Barlow Condensed',system-ui,sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.5}
+h1,h2,h3{font-family:var(--cond);letter-spacing:.02em}
+button{font-family:var(--font);cursor:pointer}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;height:var(--nav);background:var(--navy);
+    display:flex;align-items:center;padding:0 16px;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.logo{font-family:var(--cond);font-size:20px;font-weight:800;color:#fff;letter-spacing:.08em;
+      margin-right:16px;flex-shrink:0;background:none;border:none;cursor:pointer}
+.logo span{color:var(--red)}
+.nav-links{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav-links::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;color:rgba(255,255,255,.6);font-family:var(--cond);
+     font-size:14px;font-weight:600;letter-spacing:.05em;padding:7px 13px;
+     border-radius:6px;white-space:nowrap;text-transform:uppercase;transition:all .12s}
+.tab:hover{background:rgba(255,255,255,.1);color:#fff}
+.tab.active{color:var(--red)}
+.search-wrap{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);
+             border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:0 10px;
+             margin-left:auto;flex-shrink:0}
+.search-wrap svg{color:rgba(255,255,255,.45)}
+#g-search{background:none;border:none;outline:none;color:#fff;font-family:var(--font);
+          font-size:14px;width:130px;padding:7px 0}
+#g-search::placeholder{color:rgba(255,255,255,.38)}
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css"/>
+/* ── LAYOUT ── */
+main{max-width:1160px;margin:0 auto;padding:24px 16px 56px}
+.page{display:none}.page.active{display:block}
+.shdr{display:flex;align-items:flex-end;justify-content:space-between;
+      margin-bottom:18px;flex-wrap:wrap;gap:8px}
+.stitle{font-size:24px;font-weight:700}
+.ssub{font-size:13px;color:var(--text2);margin-top:2px}
+.fbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;align-items:center}
+.fi,.fs{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+        padding:8px 12px;font-family:var(--font);font-size:14px;color:var(--text);outline:none}
+.fi{flex:1;min-width:140px}.fi:focus,.fs:focus{border-color:var(--red)}
+.sbtn{background:var(--surface);border:1px solid var(--border);border-radius:6px;
+      padding:8px 14px;font-size:13px;font-weight:600;color:var(--text2);white-space:nowrap;transition:all .12s}
+.sbtn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── HERO ── */
+.hero{background:var(--navy);border-radius:var(--rl);padding:36px 32px;margin-bottom:28px;
+      position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-60px;top:-60px;width:280px;height:280px;
+              background:var(--red);border-radius:50%;opacity:.08}
+.hero h1{font-size:clamp(28px,5vw,50px);font-weight:800;color:#fff;line-height:1.05;
+         margin-bottom:8px;position:relative}
+.hero h1 span{color:var(--red)}
+.hero p{color:rgba(255,255,255,.55);font-size:15px;margin-bottom:20px;position:relative}
+.hstats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;position:relative}
+.hs{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+    border-radius:var(--r);padding:10px 18px;text-align:center}
+.hsn{font-family:var(--cond);font-size:26px;font-weight:700;color:#fff}
+.hsl{font-size:11px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em}
+.hbtns{display:flex;gap:10px;flex-wrap:wrap;position:relative}
+.bp{background:var(--red);color:#fff;border:none;border-radius:6px;padding:10px 22px;
+    font-family:var(--cond);font-size:15px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;transition:background .12s}
+.bp:hover{background:var(--red-dk)}
+.bo{background:none;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.25);
+    border-radius:6px;padding:10px 22px;font-family:var(--cond);font-size:15px;
+    font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:all .12s}
+.bo:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ── MATCH CARD ── */
+.mgrid{display:flex;flex-direction:column;gap:12px}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+    overflow:hidden;transition:box-shadow .15s}
+.mc:hover{box-shadow:0 4px 16px rgba(0,0,0,.09)}
+.mc-main{padding:16px 20px}
+.mmeta{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bg{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;
+    letter-spacing:.04em;text-transform:uppercase;background:#EEF0F4;color:var(--text2)}
+.bstage{background:#E8F0FF;color:#1A4FA0}
+.mdate{font-size:12px;color:var(--text2)}
+.mven{font-size:12px;color:var(--text3);margin-left:auto;display:flex;align-items:center;gap:3px}
+.mteams{display:flex;align-items:center;gap:12px}
+.ts{display:flex;align-items:center;gap:10px;flex:1}
+.tsr{flex-direction:row-reverse;text-align:right}
+.tsr .ti{align-items:flex-end}
+.tf{font-size:28px;line-height:1;flex-shrink:0}
+.ti{display:flex;flex-direction:column}
+.tn{font-family:var(--cond);font-size:18px;font-weight:700}
+.tc{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.vsb{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;min-width:68px}
+.vs{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.12em}
+.cd{font-family:var(--cond);font-size:12px;font-weight:700;padding:3px 9px;
+    border-radius:6px;white-space:nowrap;letter-spacing:.04em}
+.cd-u{background:var(--red);color:#fff}
+.cd-s{background:var(--gold);color:#fff}
+.cd-p{background:#E8EAEE;color:var(--text2)}
+
+/* ── MATCH ACCORDION SECTIONS ── */
+.mc-sections{border-top:1px solid var(--border)}
+.mc-sec{border-bottom:1px solid var(--border)}
+.mc-sec:last-child{border-bottom:none}
+.mc-sec-hdr{display:flex;align-items:center;justify-content:space-between;
+            padding:10px 20px;cursor:pointer;background:none;border:none;
+            width:100%;text-align:left;font-family:var(--font);transition:background .1s}
+.mc-sec-hdr:hover{background:#FAFBFC}
+.mc-sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+              color:var(--text2);display:flex;align-items:center;gap:6px}
+.mc-sec-arrow{font-size:11px;color:var(--text3);transition:transform .2s}
+.mc-sec-body{padding:0 20px 14px;display:none}
+.mc-sec-body.open{display:block}
+
+/* ── WATCH / CHANNELS ── */
+.ch-table{width:100%;border-collapse:collapse;font-size:13px}
+.ch-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+             color:var(--text3);padding:4px 8px 6px;text-align:left;border-bottom:1px solid var(--border)}
+.ch-table td{padding:6px 8px;border-bottom:1px solid #F4F6F9;vertical-align:middle}
+.ch-table tr:last-child td{border-bottom:none}
+.ch-name{font-weight:600;color:var(--text)}
+.ch-num{font-family:var(--cond);font-weight:700;font-size:14px;color:var(--navy)}
+.ch-na{color:var(--text3);font-size:12px}
+.ch-lang{font-size:11px;padding:2px 7px;border-radius:20px;font-weight:600}
+.ch-lang-en{background:#EBF3FF;color:var(--blue)}
+.ch-lang-es{background:#FFF5E6;color:#A05800}
+.ch-lang-fr{background:#F0FBF0;color:var(--green)}
+.ch-stream{font-size:12px;color:var(--purple);font-weight:600}
+.ch-link{color:var(--red);font-weight:600;font-size:12px;text-decoration:underline;text-underline-offset:2px}
+.ch-flag{font-size:14px;margin-right:4px}
+
+/* ── PRONOSTIC ── */
+.prono{display:flex;flex-direction:column;gap:10px}
+.prono-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prono-winner{display:flex;align-items:center;gap:6px}
+.prono-flag{font-size:20px}
+.prono-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.prono-value{font-family:var(--cond);font-size:16px;font-weight:700;color:var(--text)}
+.conf-pill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
+.conf-Low{background:#FFF5E6;color:#A05800}
+.conf-Medium{background:#E8F0FF;color:var(--blue)}
+.conf-High{background:#ECFBF1;color:var(--green)}
+.prono-note{font-size:13px;color:var(--text2);line-height:1.5}
+.prono-disclaimer{font-size:11px;color:var(--text3);font-style:italic;
+                  border-top:1px solid var(--border);padding-top:8px;margin-top:4px}
+
+/* ── HASHTAGS ── */
+.htags{display:flex;flex-direction:column;gap:10px}
+.htag-platform{display:flex;align-items:flex-start;gap:10px}
+.htag-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center;margin-top:2px}
+.htag-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+           color:var(--text3);min-width:72px;margin-top:3px}
+.htag-list{display:flex;flex-wrap:wrap;gap:5px}
+.htag{font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;
+      background:#F0F2F5;color:var(--text2);cursor:pointer;transition:all .12s;
+      font-family:var(--cond);letter-spacing:.02em}
+.htag:hover{background:var(--navy);color:#fff}
+
+/* ── TEAMS ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+       padding:16px;cursor:pointer;transition:border-color .12s,box-shadow .12s;
+       display:flex;flex-direction:column;gap:5px;text-align:left}
+.tcard:hover{border-color:var(--red);box-shadow:0 4px 14px rgba(232,25,60,.12)}
+.tfl{font-size:34px;line-height:1;margin-bottom:4px}
+.tcn{font-family:var(--cond);font-size:16px;font-weight:700}
+.tcm{font-size:12px;color:var(--text2)}
+.cb{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+    letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.cb-UEFA{background:#EBF3FF;color:var(--blue)}.cb-CONMEBOL{background:#FFF5E6;color:#A05800}
+.cb-CONCACAF{background:#ECFBF1;color:var(--green)}.cb-AFC{background:#F3EEFF;color:var(--purple)}
+.cb-CAF{background:#FFF0F0;color:#C72020}.cb-OFC{background:#E6FFFE;color:#0A7272}
+
+/* ── GROUPS ── */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.gcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ghdr{background:var(--navy);padding:10px 16px}
+.ghdr h3{font-family:var(--cond);font-size:17px;font-weight:700;color:#fff;letter-spacing:.06em}
+.gtbl{width:100%;border-collapse:collapse;font-size:14px}
+.gtbl th{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;
+         letter-spacing:.06em;padding:8px 14px 4px;text-align:left;border-bottom:1px solid var(--border)}
+.gtbl td{padding:8px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.gtbl tr:last-child td{border-bottom:none}
+.row-adv td{background:#F4FBF7}
+.cr{text-align:right!important}
+.tlink{background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;
+       gap:6px;font-family:var(--font);font-size:14px;color:var(--text);padding:0}
+.tlink:hover{color:var(--red)}
+.atick{font-size:11px;color:var(--green);font-weight:700}
+.rchip{font-size:11px;background:#F0F2F5;color:var(--text2);padding:2px 6px;border-radius:4px;font-weight:600}
+
+/* ── BRACKET ── */
+.bwrap{overflow-x:auto;padding-bottom:12px}
+.bracket{display:flex;gap:12px;align-items:flex-start;min-width:800px;padding:4px 0 8px}
+.bround{flex:1;min-width:140px}
+.brhdr{font-family:var(--cond);font-size:12px;font-weight:700;color:var(--text2);
+       text-transform:uppercase;letter-spacing:.08em;padding:0 4px 10px;text-align:center;
+       border-bottom:1px solid var(--border);margin-bottom:10px}
+.bslots{display:flex;flex-direction:column;gap:8px;padding:0 4px}
+.bmatch{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.bteam{display:flex;align-items:center;gap:6px;padding:6px 10px;font-size:12px;font-weight:500}
+.bteam+.bteam{border-top:1px solid var(--border)}
+.btbd{color:var(--text3);font-style:italic}
+.bflag{font-size:14px;flex-shrink:0}
+.bname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text2);grid-column:1/-1}
+.eico{font-size:36px;display:block;margin-bottom:12px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .hero{padding:24px 20px}.hero h1{font-size:32px}
+  .mteams{flex-wrap:wrap;justify-content:center}
+  .ts,.tsr{flex-direction:column;text-align:center;align-items:center;flex:unset;min-width:90px}
+  .tsr .ti{align-items:center}.vsb{margin:2px 0}
+  .mc-sections{font-size:13px}
+  .logo{font-size:17px;margin-right:8px}
+  #g-search{width:90px}
+  .ggrid{grid-template-columns:1fr 1fr}
+  .ch-table th:last-child,.ch-table td:last-child{display:none}
+}
+@media(max-width:400px){
+  .ggrid{grid-template-columns:1fr}
+  .tab{padding:5px 8px;font-size:12px}
+}
+</style>
 </head>
 <body>
 
-<!-- ─── Skip link (accessibility) ─────────────── -->
-<a class="sr-only" href="#main-content">Skip to main content</a>
-
-<!-- ─── Navigation ────────────────────────────── -->
-<nav role="navigation" aria-label="Main navigation">
-  <a href="#" class="nav-logo" onclick="App.nav('home');return false;" aria-label="FIFA World Cup 2026 Home">
-    WC<span>2026</span>
-  </a>
-
-  <div class="nav-links" role="list">
-    <button class="nav-link active" data-page="home"     role="listitem" aria-current="page">Home</button>
-    <button class="nav-link"        data-page="schedule" role="listitem" aria-current="false">Schedule</button>
-    <button class="nav-link"        data-page="teams"    role="listitem" aria-current="false">Teams</button>
-    <button class="nav-link"        data-page="groups"   role="listitem" aria-current="false">Groups</button>
-    <button class="nav-link"        data-page="bracket"  role="listitem" aria-current="false">Bracket</button>
+<nav>
+  <button class="logo" data-page="home">WC<span>2026</span></button>
+  <div class="nav-links">
+    <button class="tab active" data-page="home">Home</button>
+    <button class="tab" data-page="schedule">Schedule</button>
+    <button class="tab" data-page="teams">Teams</button>
+    <button class="tab" data-page="groups">Groups</button>
+    <button class="tab" data-page="bracket">Bracket</button>
   </div>
-
-  <div class="nav-search-wrap" role="search">
+  <div class="search-wrap">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
       <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/>
       <path d="M9.5 9.5L12.5 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
     </svg>
-    <input type="search" id="global-search" placeholder="Search team…"
-           aria-label="Search — type a team name to view their schedule"/>
+    <input type="search" id="g-search" placeholder="Search team…" autocomplete="off"/>
   </div>
 </nav>
 
-<!-- ─── Main content ──────────────────────────── -->
-<main id="main-content">
-
-  <!-- HOME ──────────────────────────────────────── -->
-  <section id="page-home" class="page" aria-label="Home">
-    <div class="hero" role="banner">
-      <h1>FIFA WORLD CUP<br/><span>2026™</span></h1>
-      <p>June 11 – July 19 · USA · Canada · Mexico</p>
-      <div class="hero-stats" aria-label="Tournament facts">
-        <div class="hero-stat"><div class="hero-stat-n">48</div><div class="hero-stat-l">Teams</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">104</div><div class="hero-stat-l">Matches</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">12</div><div class="hero-stat-l">Groups</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">16</div><div class="hero-stat-l">Venues</div></div>
-        <div class="hero-stat"><div class="hero-stat-n">39</div><div class="hero-stat-l">Days</div></div>
-      </div>
-      <div class="hero-btns">
-        <button class="btn-primary" onclick="App.nav('schedule')">View Schedule</button>
-        <button class="btn-outline"  onclick="App.nav('bracket')">Bracket</button>
-      </div>
+<main>
+<div id="page-home" class="page active">
+  <div class="hero">
+    <h1>FIFA WORLD CUP<br/><span>2026™</span></h1>
+    <p>June 11 – July 19 · USA · Canada · Mexico</p>
+    <div class="hstats">
+      <div class="hs"><div class="hsn">48</div><div class="hsl">Teams</div></div>
+      <div class="hs"><div class="hsn">104</div><div class="hsl">Matches</div></div>
+      <div class="hs"><div class="hsn">12</div><div class="hsl">Groups</div></div>
+      <div class="hs"><div class="hsn">16</div><div class="hsl">Venues</div></div>
+      <div class="hs"><div class="hsn">39</div><div class="hsl">Days</div></div>
     </div>
-
-    <div class="section-hdr">
-      <div>
-        <div class="section-title">Upcoming Matches</div>
-        <div class="section-sub">Next fixtures in the tournament</div>
-      </div>
+    <div class="hbtns">
+      <button class="bp" data-page="schedule">View Schedule</button>
+      <button class="bo" data-page="bracket">Bracket</button>
     </div>
-    <div id="home-matches" class="matches-grid"></div>
-  </section>
+  </div>
+  <div class="shdr"><div><div class="stitle">Upcoming Matches</div><div class="ssub">Next fixtures</div></div></div>
+  <div id="home-matches" class="mgrid"></div>
+</div>
 
-  <!-- SCHEDULE ──────────────────────────────────── -->
-  <section id="page-schedule" class="page" hidden aria-label="Full match schedule">
-    <div class="section-hdr">
-      <div>
-        <div class="section-title">Full Schedule</div>
-        <div class="section-sub">104 matches across group stage and knockouts</div>
-      </div>
-    </div>
+<div id="page-schedule" class="page">
+  <div class="shdr"><div><div class="stitle">Full Schedule</div><div class="ssub">104 matches · group stage and knockouts</div></div></div>
+  <div class="fbar">
+    <input class="fi" type="search" id="s-search" placeholder="Search team or venue…" autocomplete="off"/>
+    <select class="fs" id="s-group"><option value="">All groups</option></select>
+    <select class="fs" id="s-stage">
+      <option value="">All stages</option>
+      <option>Group Stage</option><option>Round of 32</option><option>Round of 16</option>
+      <option>Quarterfinal</option><option>Semifinal</option><option>3rd Place</option><option>Final</option>
+    </select>
+    <button class="sbtn" id="s-sort">↑ Date</button>
+  </div>
+  <div id="schedule-list" class="mgrid"></div>
+</div>
 
-    <div class="filters-bar" role="search" aria-label="Schedule filters">
-      <input class="filter-input" type="search" id="sched-search"
-             placeholder="Search team or venue…" aria-label="Search matches by team or venue"/>
+<div id="page-teams" class="page">
+  <div class="shdr"><div><div class="stitle">48 Teams</div><div class="ssub">Click any team to view their schedule</div></div></div>
+  <div class="fbar">
+    <input class="fi" type="search" id="t-search" placeholder="Search team…" autocomplete="off"/>
+    <select class="fs" id="t-conf">
+      <option value="">All confederations</option>
+      <option>UEFA</option><option>CONMEBOL</option><option>CONCACAF</option>
+      <option>AFC</option><option>CAF</option><option>OFC</option>
+    </select>
+    <select class="fs" id="t-sort">
+      <option value="name">A – Z</option>
+      <option value="ranking">FIFA Ranking</option>
+      <option value="conf">Confederation</option>
+    </select>
+  </div>
+  <div id="teams-grid" class="tgrid"></div>
+</div>
 
-      <select class="filter-select" id="sched-group" aria-label="Filter by group">
-        <option value="">All groups</option>
-        <!-- Populated by JS -->
-      </select>
+<div id="page-groups" class="page">
+  <div class="shdr"><div><div class="stitle">Group Stage</div><div class="ssub">12 groups · Top 2 + 8 best 3rd advance</div></div></div>
+  <div class="fbar">
+    <input class="fi" type="search" id="gr-search" placeholder="Search group or team…" autocomplete="off"/>
+  </div>
+  <div id="groups-grid" class="ggrid"></div>
+</div>
 
-      <select class="filter-select" id="sched-stage" aria-label="Filter by stage">
-        <option value="">All stages</option>
-        <option value="Group Stage">Group Stage</option>
-        <option value="Round of 32">Round of 32</option>
-        <option value="Round of 16">Round of 16</option>
-        <option value="Quarterfinal">Quarterfinal</option>
-        <option value="Semifinal">Semifinal</option>
-        <option value="3rd Place">3rd Place</option>
-        <option value="Final">Final</option>
-      </select>
-
-      <button class="sort-btn" id="sort-date-btn" aria-label="Sort by date, toggle ascending/descending">
-        ↑ Date
-      </button>
-    </div>
-
-    <div id="schedule-list" class="matches-grid" role="feed" aria-busy="false"></div>
-  </section>
-
-  <!-- TEAMS ─────────────────────────────────────── -->
-  <section id="page-teams" class="page" hidden aria-label="All 48 teams">
-    <div class="section-hdr">
-      <div>
-        <div class="section-title">48 Teams</div>
-        <div class="section-sub">Click any team to view their match calendar</div>
-      </div>
-    </div>
-
-    <div class="filters-bar" role="search" aria-label="Team filters">
-      <input class="filter-input" type="search" id="teams-search"
-             placeholder="Search team…" aria-label="Search teams"/>
-
-      <select class="filter-select" id="teams-conf" aria-label="Filter by confederation">
-        <option value="">All confederations</option>
-        <option value="UEFA">UEFA</option>
-        <option value="CONMEBOL">CONMEBOL</option>
-        <option value="CONCACAF">CONCACAF</option>
-        <option value="AFC">AFC</option>
-        <option value="CAF">CAF</option>
-        <option value="OFC">OFC</option>
-      </select>
-
-      <select class="filter-select" id="teams-sort" aria-label="Sort teams">
-        <option value="name">A – Z</option>
-        <option value="ranking">FIFA Ranking</option>
-        <option value="conf">Confederation</option>
-      </select>
-    </div>
-
-    <div id="teams-grid" class="teams-grid"></div>
-  </section>
-
-  <!-- GROUPS ────────────────────────────────────── -->
-  <section id="page-groups" class="page" hidden aria-label="Group stage">
-    <div class="section-hdr">
-      <div>
-        <div class="section-title">Group Stage</div>
-        <div class="section-sub">12 groups · Top 2 + 8 best 3rd-place teams advance</div>
-      </div>
-    </div>
-
-    <div class="filters-bar" role="search" aria-label="Groups search">
-      <input class="filter-input" type="search" id="groups-search"
-             placeholder="Search group or team…" aria-label="Search groups"/>
-    </div>
-
-    <div id="groups-grid" class="groups-grid"></div>
-  </section>
-
-  <!-- BRACKET ───────────────────────────────────── -->
-  <section id="page-bracket" class="page" hidden aria-label="Knockout bracket">
-    <div class="section-hdr">
-      <div>
-        <div class="section-title">Knockout Bracket</div>
-        <div class="section-sub">Round of 32 → Final · MetLife Stadium, NY/NJ · July 19</div>
-      </div>
-    </div>
-
-    <div class="bracket-wrapper" tabindex="0" aria-label="Bracket — scroll horizontally to see all rounds">
-      <div id="bracket-inner" class="bracket"></div>
-    </div>
-  </section>
-
+<div id="page-bracket" class="page">
+  <div class="shdr"><div><div class="stitle">Knockout Bracket</div><div class="ssub">Round of 32 → Final · MetLife Stadium, NJ · July 19</div></div></div>
+  <div class="bwrap"><div id="bracket-inner" class="bracket"></div></div>
+</div>
 </main>
 
-<!-- ─── Data ───────────────────────────────────── -->
-<script src="data/teams.js"></script>
-<script src="data/matches.js"></script>
-<script src="data/broadcasters.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════════
+// CONFIG — edit broadcaster data, pronostics, and hashtags here
+// ════════════════════════════════════════════════════════════════
 
-<!-- ─── App ────────────────────────────────────── -->
-<script src="js/utils.js"></script>
-<script src="js/matchCard.js"></script>
-<script src="js/app.js"></script>
+// Broadcaster data: structured per country.
+// channel: cable/satellite channel number, or "N/A" if not applicable.
+// stream: streaming service name, or null.
+var BROADCASTERS = {
+  // United States broadcasters
+  USA: [
+    {name:"FOX",       ch:"5 (varies)",  lang:"en", stream:"FOX One",    url:"https://www.foxsports.com/soccer/fifa-world-cup",       flag:"🇺🇸"},
+    {name:"FS1",       ch:"219 (DirecTV)",lang:"en",stream:"FOX One",    url:"https://www.foxsports.com/soccer/fifa-world-cup",       flag:"🇺🇸"},
+    {name:"Telemundo", ch:"N/A (OTA)",   lang:"es", stream:"Peacock",    url:"https://www.telemundo.com/shows/copa-mundial-2026",     flag:"🇺🇸"},
+    {name:"Universo",  ch:"418 (DirecTV)",lang:"es",stream:"Peacock",    url:"https://www.telemundo.com/shows/copa-mundial-2026",     flag:"🇺🇸"},
+    {name:"Peacock",   ch:"N/A",         lang:"es", stream:"Peacock",    url:"https://www.peacocktv.com/",                           flag:"🇺🇸"},
+  ],
+  // Colombia broadcasters
+  COL: [
+    {name:"Caracol TV",ch:"2 (OTA)",     lang:"es", stream:"Caracol Play",url:"https://www.caracoltv.com/",                         flag:"🇨🇴"},
+    {name:"RCN",       ch:"3 (OTA)",     lang:"es", stream:"RCN Play",   url:"https://www.canalrcn.com/",                           flag:"🇨🇴"},
+    {name:"Win Sports+",ch:"N/A",        lang:"es", stream:"Win+",       url:"https://www.winsports.co/",                           flag:"🇨🇴"},
+    {name:"DSports",   ch:"621 (DirecTV)",lang:"es",stream:"DGO",        url:"https://www.dgo.com.co/",                             flag:"🇨🇴"},
+    {name:"DGO",       ch:"N/A",         lang:"es", stream:"DGO",        url:"https://www.dgo.com.co/",                             flag:"🇨🇴"},
+  ],
+  // Default (global fallback shown on all other matches)
+  DEFAULT: [
+    {name:"FOX / FS1", ch:"N/A",         lang:"en", stream:"FOX One",    url:"https://www.foxsports.com/soccer/fifa-world-cup",       flag:"🌎"},
+    {name:"Telemundo", ch:"N/A",         lang:"es", stream:"Peacock",    url:"https://www.telemundo.com/shows/copa-mundial-2026",     flag:"🌎"},
+    {name:"FIFA+",     ch:"N/A",         lang:"en", stream:"FIFA+",      url:"https://www.fifa.com/fifaplus/",                       flag:"🌎"},
+  ],
+};
 
+// Pronostics — keyed by match ID.
+// winner: team ID, or "Draw", or "TBD".
+// conf: "Low" | "Medium" | "High"
+// note: short editorial sentence.
+var PRONOSTICS = {
+  // Group A
+  m1: {winner:"MEX", conf:"Medium", note:"Mexico has strong home support and tournament experience; South Africa will make it competitive."},
+  m2: {winner:"KOR", conf:"Medium", note:"South Korea's technical quality edges out Czechia, though European sides are difficult to break down."},
+  m3: {winner:"MEX", conf:"Medium", note:"Mexico should edge this with home advantage, though South Korea's counter-attack is dangerous."},
+  m4: {winner:"CZE", conf:"Low",    note:"Very evenly matched; Czechia's European experience may prove decisive in a tight contest."},
+  m5: {winner:"MEX", conf:"Medium", note:"Mexico likely to qualify through this final group match with a win or draw."},
+  m6: {winner:"Draw",conf:"Low",    note:"Both teams fighting for third place; expect a cautious, hard-fought game."},
+  // Group B
+  m7: {winner:"CAN", conf:"Medium", note:"Canada at home is a significant advantage; expect an energetic performance in front of their fans."},
+  m8: {winner:"SUI", conf:"Medium", note:"Switzerland's defensive solidity and experience should handle Qatar, who impressed at 2022 but struggled."},
+  m9: {winner:"CAN", conf:"Medium", note:"Canada should have too much quality for Qatar; a win here advances their knockout chances."},
+  m10:{winner:"SUI", conf:"Medium", note:"Switzerland's organization and quality should prevail over Bosnia in this pivotal group clash."},
+  m11:{winner:"SUI", conf:"Low",    note:"This could be a decider for Group B's top spot; Switzerland and Canada are evenly matched."},
+  m12:{winner:"BIH", conf:"Low",    note:"Bosnia will be motivated; Qatar would need an upset here to advance."},
+  // Group C
+  m13:{winner:"BRA", conf:"High",   note:"Brazil are favorites to top Group C; Morocco's physical style will test but likely won't prevail."},
+  m14:{winner:"SCO", conf:"Medium", note:"Scotland should handle Haiti, who are the group underdogs making their debut."},
+  m15:{winner:"BRA", conf:"High",   note:"Brazil vs Scotland should be comfortable for the five-time champions."},
+  m16:{winner:"MAR", conf:"High",   note:"Morocco's defensive organization will be too much for Haiti at this level."},
+  m17:{winner:"BRA", conf:"High",   note:"Brazil expected to finish top of the group with a routine win over Haiti."},
+  m18:{winner:"MAR", conf:"Medium", note:"Morocco should secure second place; Scotland will push hard to advance as best third."},
+  // Group D
+  m19:{winner:"USA", conf:"Medium", note:"USA open at home with a winnable fixture; crowd support and Paraguay's defensive style make this competitive."},
+  m20:{winner:"TUR", conf:"Low",    note:"Türkiye and Australia are closely matched; a tough tactical battle expected."},
+  m21:{winner:"USA", conf:"Medium", note:"USA face Australia in what should be an open, attacking match with home advantage tipping it."},
+  m22:{winner:"TUR", conf:"Medium", note:"Türkiye should edge Paraguay; their experienced squad handles tournament pressure well."},
+  m23:{winner:"USA", conf:"Medium", note:"A win here likely secures first place for the USA; Türkiye will be organized and dangerous."},
+  m24:{winner:"Draw",conf:"Low",    note:"Both teams could be fighting for third-place passage; expect a tactical, low-scoring game."},
+  // Group E
+  m25:{winner:"GER", conf:"High",   note:"Germany should dispatch Curaçao comfortably in their Group E opener."},
+  m26:{winner:"CIV", conf:"Low",    note:"Ivory Coast and Ecuador are similarly ranked; an even, competitive group match."},
+  m27:{winner:"GER", conf:"Medium", note:"Germany vs Ivory Coast — a test of German composure against African flair."},
+  m28:{winner:"ECU", conf:"Medium", note:"Ecuador's South American experience should prove too much for Curaçao."},
+  m29:{winner:"GER", conf:"Medium", note:"Germany should top the group with a win over Ecuador in the final matchday."},
+  m30:{winner:"CIV", conf:"Medium", note:"Ivory Coast should secure second with a win over Curaçao."},
+  // Group F
+  m31:{winner:"NED", conf:"Medium", note:"Netherlands' quality and attacking depth should see off Tunisia comfortably."},
+  m32:{winner:"JPN", conf:"Medium", note:"Japan have shown they can beat top sides; Sweden is beatable."},
+  m33:{winner:"NED", conf:"Medium", note:"Netherlands vs Japan — an intriguing tactical battle; Dutch quality wins out."},
+  m34:{winner:"SWE", conf:"Medium", note:"Sweden expected to take points here; Tunisia pushed hard in recent tournaments."},
+  m35:{winner:"NED", conf:"High",   note:"Netherlands should top the group; Sweden will press but the Dutch have too much quality."},
+  m36:{winner:"JPN", conf:"Medium", note:"Japan should advance; they need a result here and have the quality to get it."},
+  // Group G
+  m37:{winner:"BEL", conf:"Medium", note:"Belgium should handle New Zealand without too many problems."},
+  m38:{winner:"Draw",conf:"Low",    note:"Iran vs Egypt is a hard game to call; both sides are compact and disciplined."},
+  m39:{winner:"BEL", conf:"Medium", note:"Belgium should add another win against Iran, who struggle against organized European defenses."},
+  m40:{winner:"EGY", conf:"Medium", note:"Egypt should beat New Zealand; Africa vs Oceania often goes the African side's way."},
+  m41:{winner:"BEL", conf:"Medium", note:"Belgium should top the group with a win over Egypt, though Egypt make life difficult."},
+  m42:{winner:"IRN", conf:"Low",    note:"Iran vs New Zealand — Iran should advance but New Zealand can surprise."},
+  // Group H
+  m43:{winner:"ESP", conf:"High",   note:"Spain are ranked No. 2 globally; Cape Verde will defend deep and hope to nick a goal."},
+  m44:{winner:"URU", conf:"Medium", note:"Uruguay's experience and grit should see off Saudi Arabia in a tough match."},
+  m45:{winner:"ESP", conf:"Medium", note:"Spain vs Uruguay — the best game in Group H; Spain's possession game should edge it."},
+  m46:{winner:"KSA", conf:"Medium", note:"Saudi Arabia should beat Cape Verde; they need points to qualify."},
+  m47:{winner:"ESP", conf:"High",   note:"Spain should top Group H; Saudi Arabia will organize well but lack the quality to win."},
+  m48:{winner:"URU", conf:"Medium", note:"Uruguay vs Cape Verde — Uruguay advance; Cape Verde will push hard."},
+  // Group I
+  m49:{winner:"FRA", conf:"High",   note:"France are ranked No. 1 globally; Iraq are making their return after 40 years and will face a tough lesson."},
+  m50:{winner:"SEN", conf:"Medium", note:"Senegal are quality and should handle Norway, though Erling Haaland makes every match dangerous."},
+  m51:{winner:"FRA", conf:"High",   note:"France vs Senegal — a showcase match; both quality sides, but France's depth wins."},
+  m52:{winner:"NOR", conf:"Medium", note:"Norway need points; Iraq will give everything but Haaland should be the difference."},
+  m53:{winner:"FRA", conf:"High",   note:"France should top Group I comfortably; both will likely already have qualified."},
+  m54:{winner:"SEN", conf:"Medium", note:"Senegal should advance here; Iraq have heart but lack quality at this level."},
+  // Group J
+  m55:{winner:"ARG", conf:"High",   note:"Argentina, the defending champions, should beat Jordan without significant issues."},
+  m56:{winner:"AUT", conf:"Medium", note:"Austria's quality should see off Algeria in a tight European vs African group clash."},
+  m57:{winner:"ARG", conf:"High",   note:"Argentina vs Austria — Argentina are clear favorites; Messi and the squad are in top form."},
+  m58:{winner:"ALG", conf:"Low",    note:"Algeria vs Jordan — North African derby flavor; Algeria should advance."},
+  m59:{winner:"ARG", conf:"High",   note:"Argentina should top the group, though they may rest key players if already qualified."},
+  m60:{winner:"AUT", conf:"Medium", note:"Austria vs Jordan — Austria should secure second place."},
+  // Group K
+  m61:{winner:"POR", conf:"High",   note:"Portugal are ranked No. 5; Uzbekistan are making their World Cup debut."},
+  m62:{winner:"COL", conf:"Medium", note:"Colombia have strong South American quality; DR Congo are dangerous but less experienced at this level."},
+  m63:{winner:"POR", conf:"Medium", note:"Portugal vs Colombia — the star match of Group K. Close, but Ronaldo's experience tips it."},
+  m64:{winner:"COD", conf:"Medium", note:"DR Congo should handle Uzbekistan; both are making their tournament marks."},
+  m65:{winner:"POR", conf:"High",   note:"Portugal should top the group; DR Congo will be organized but outclassed."},
+  m66:{winner:"COL", conf:"Medium", note:"Colombia vs Uzbekistan — Colombia should win and secure second place or better."},
+  // Group L
+  m67:{winner:"ENG", conf:"High",   note:"England vs Panama — England should win comfortably; Panama are well-organized but outmatched."},
+  m68:{winner:"CRO", conf:"Medium", note:"Croatia vs Ghana — Croatia's World Cup pedigree (2018 finalists) should prove decisive."},
+  m69:{winner:"ENG", conf:"Medium", note:"England vs Croatia — the rematch of Euro finals; England should edge this with home support."},
+  m70:{winner:"CRO", conf:"Medium", note:"Croatia should beat Ghana to push for qualification."},
+  m71:{winner:"ENG", conf:"High",   note:"England should top Group L; expect them to manage the game if already qualified."},
+  m72:{winner:"CRO", conf:"Medium", note:"Croatia vs Panama — Croatia should secure their passage to the knockouts."},
+  // Knockout stage
+  r32a:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32b:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32c:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32d:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32e:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32f:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32g:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32h:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32i:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32j:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32k:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32l:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32m:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32n:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32o:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r32p:{winner:"TBD",conf:"Low",note:"Round of 32 — group stage results will determine which teams meet here."},
+  r16a:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16b:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16c:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16d:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16e:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16f:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16g:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  r16h:{winner:"TBD",conf:"Low",note:"Round of 16 — to be determined after group stage."},
+  qfa:{winner:"TBD",conf:"Low",note:"Quarterfinal — to be determined."},
+  qfb:{winner:"TBD",conf:"Low",note:"Quarterfinal — to be determined."},
+  qfc:{winner:"TBD",conf:"Low",note:"Quarterfinal — to be determined."},
+  qfd:{winner:"TBD",conf:"Low",note:"Quarterfinal — to be determined."},
+  sfa:{winner:"TBD",conf:"Low",note:"Semifinal — to be determined."},
+  sfb:{winner:"TBD",conf:"Low",note:"Semifinal — to be determined."},
+  "3rd":{winner:"TBD",conf:"Low",note:"3rd place playoff — to be determined."},
+  fin:{winner:"TBD",conf:"Low",note:"The Final — July 19, MetLife Stadium. Too early to call."},
+};
+
+// Hashtag config — keyed by match ID.
+// Each entry has twitter, tiktok, instagram arrays.
+// Matches not listed fall back to HASHTAG_DEFAULT (generated from team codes + stage).
+var HASHTAGS = {
+  m19:{
+    twitter:["#USAPAR","#USAvPAR","#WorldCup2026","#USMNT","#FIFAWorldCup"],
+    tiktok: ["#USMNT","#WorldCup2026","#USAvsParaguay","#FIFAWorldCup"],
+    instagram:["#USMNT","#WorldCup2026","#USAvsParaguay","#FIFAWorldCup","#GroupD"],
+  },
+  m21:{
+    twitter:["#USAAUS","#USAvAUS","#WorldCup2026","#USMNT","#Socceroos"],
+    tiktok: ["#USMNT","#WorldCup2026","#USAvsAustralia","#Socceroos"],
+    instagram:["#USMNT","#Socceroos","#WorldCup2026","#USAvsAustralia","#GroupD"],
+  },
+  m23:{
+    twitter:["#USATUR","#USAvTUR","#WorldCup2026","#USMNT","#MilliTakım"],
+    tiktok: ["#USMNT","#WorldCup2026","#USAvsTurkey","#MilliTakım"],
+    instagram:["#USMNT","#WorldCup2026","#USAvsTurkey","#GroupD","#FIFAWorldCup"],
+  },
+  m62:{
+    twitter:["#COLCOD","#COLvCOD","#WorldCup2026","#Colombia","#LosCafeteros"],
+    tiktok: ["#Colombia","#WorldCup2026","#LosCafeteros","#FIFAWorldCup"],
+    instagram:["#Colombia","#LosCafeteros","#WorldCup2026","#GroupK","#FIFAWorldCup"],
+  },
+  m63:{
+    twitter:["#PORCOL","#PORvCOL","#WorldCup2026","#Colombia","#Portugal","#Ronaldo"],
+    tiktok: ["#Colombia","#Portugal","#WorldCup2026","#LosCafeteros","#Ronaldo"],
+    instagram:["#Colombia","#Portugal","#WorldCup2026","#LosCafeteros","#Ronaldo","#GroupK"],
+  },
+  m66:{
+    twitter:["#UZBCOL","#COLvUZB","#WorldCup2026","#Colombia","#LosCafeteros"],
+    tiktok: ["#Colombia","#WorldCup2026","#LosCafeteros","#FIFAWorldCup"],
+    instagram:["#Colombia","#LosCafeteros","#WorldCup2026","#GroupK","#FIFAWorldCup"],
+  },
+};
+
+// ════════════════════════════════════════════════════════════════
+// TEAMS & MATCHES DATA
+// ════════════════════════════════════════════════════════════════
+
+var TEAMS = [
+  {id:"MEX",name:"Mexico",        flag:"🇲🇽",conf:"CONCACAF",group:"A",ranking:12},
+  {id:"KOR",name:"South Korea",   flag:"🇰🇷",conf:"AFC",     group:"A",ranking:22},
+  {id:"RSA",name:"South Africa",  flag:"🇿🇦",conf:"CAF",     group:"A",ranking:69},
+  {id:"CZE",name:"Czechia",       flag:"🇨🇿",conf:"UEFA",    group:"A",ranking:37},
+  {id:"CAN",name:"Canada",        flag:"🇨🇦",conf:"CONCACAF",group:"B",ranking:48},
+  {id:"SUI",name:"Switzerland",   flag:"🇨🇭",conf:"UEFA",    group:"B",ranking:19},
+  {id:"QAT",name:"Qatar",         flag:"🇶🇦",conf:"AFC",     group:"B",ranking:55},
+  {id:"BIH",name:"Bosnia & Herz.",flag:"🇧🇦",conf:"UEFA",    group:"B",ranking:60},
+  {id:"BRA",name:"Brazil",        flag:"🇧🇷",conf:"CONMEBOL",group:"C",ranking:6},
+  {id:"MAR",name:"Morocco",       flag:"🇲🇦",conf:"CAF",     group:"C",ranking:14},
+  {id:"SCO",name:"Scotland",      flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",conf:"UEFA",    group:"C",ranking:35},
+  {id:"HAI",name:"Haiti",         flag:"🇭🇹",conf:"CONCACAF",group:"C",ranking:82},
+  {id:"USA",name:"USA",           flag:"🇺🇸",conf:"CONCACAF",group:"D",ranking:11},
+  {id:"AUS",name:"Australia",     flag:"🇦🇺",conf:"AFC",     group:"D",ranking:23},
+  {id:"PAR",name:"Paraguay",      flag:"🇵🇾",conf:"CONMEBOL",group:"D",ranking:60},
+  {id:"TUR",name:"Türkiye",       flag:"🇹🇷",conf:"UEFA",    group:"D",ranking:28},
+  {id:"GER",name:"Germany",       flag:"🇩🇪",conf:"UEFA",    group:"E",ranking:13},
+  {id:"ECU",name:"Ecuador",       flag:"🇪🇨",conf:"CONMEBOL",group:"E",ranking:43},
+  {id:"CIV",name:"Ivory Coast",   flag:"🇨🇮",conf:"CAF",     group:"E",ranking:49},
+  {id:"CUR",name:"Curaçao",       flag:"🇨🇼",conf:"CONCACAF",group:"E",ranking:85},
+  {id:"NED",name:"Netherlands",   flag:"🇳🇱",conf:"UEFA",    group:"F",ranking:7},
+  {id:"JPN",name:"Japan",         flag:"🇯🇵",conf:"AFC",     group:"F",ranking:18},
+  {id:"TUN",name:"Tunisia",       flag:"🇹🇳",conf:"CAF",     group:"F",ranking:34},
+  {id:"SWE",name:"Sweden",        flag:"🇸🇪",conf:"UEFA",    group:"F",ranking:25},
+  {id:"BEL",name:"Belgium",       flag:"🇧🇪",conf:"UEFA",    group:"G",ranking:9},
+  {id:"IRN",name:"IR Iran",       flag:"🇮🇷",conf:"AFC",     group:"G",ranking:20},
+  {id:"EGY",name:"Egypt",         flag:"🇪🇬",conf:"CAF",     group:"G",ranking:50},
+  {id:"NZL",name:"New Zealand",   flag:"🇳🇿",conf:"OFC",     group:"G",ranking:93},
+  {id:"ESP",name:"Spain",         flag:"🇪🇸",conf:"UEFA",    group:"H",ranking:2},
+  {id:"URU",name:"Uruguay",       flag:"🇺🇾",conf:"CONMEBOL",group:"H",ranking:16},
+  {id:"KSA",name:"Saudi Arabia",  flag:"🇸🇦",conf:"AFC",     group:"H",ranking:56},
+  {id:"CPV",name:"Cape Verde",    flag:"🇨🇻",conf:"CAF",     group:"H",ranking:77},
+  {id:"FRA",name:"France",        flag:"🇫🇷",conf:"UEFA",    group:"I",ranking:1},
+  {id:"SEN",name:"Senegal",       flag:"🇸🇳",conf:"CAF",     group:"I",ranking:19},
+  {id:"NOR",name:"Norway",        flag:"🇳🇴",conf:"UEFA",    group:"I",ranking:31},
+  {id:"IRQ",name:"Iraq",          flag:"🇮🇶",conf:"AFC",     group:"I",ranking:58},
+  {id:"ARG",name:"Argentina",     flag:"🇦🇷",conf:"CONMEBOL",group:"J",ranking:3},
+  {id:"AUT",name:"Austria",       flag:"🇦🇹",conf:"UEFA",    group:"J",ranking:26},
+  {id:"ALG",name:"Algeria",       flag:"🇩🇿",conf:"CAF",     group:"J",ranking:45},
+  {id:"JOR",name:"Jordan",        flag:"🇯🇴",conf:"AFC",     group:"J",ranking:66},
+  {id:"POR",name:"Portugal",      flag:"🇵🇹",conf:"UEFA",    group:"K",ranking:5},
+  {id:"COL",name:"Colombia",      flag:"🇨🇴",conf:"CONMEBOL",group:"K",ranking:15},
+  {id:"UZB",name:"Uzbekistan",    flag:"🇺🇿",conf:"AFC",     group:"K",ranking:71},
+  {id:"COD",name:"DR Congo",      flag:"🇨🇩",conf:"CAF",     group:"K",ranking:55},
+  {id:"ENG",name:"England",       flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",conf:"UEFA",    group:"L",ranking:4},
+  {id:"CRO",name:"Croatia",       flag:"🇭🇷",conf:"UEFA",    group:"L",ranking:10},
+  {id:"PAN",name:"Panama",        flag:"🇵🇦",conf:"CONCACAF",group:"L",ranking:72},
+  {id:"GHA",name:"Ghana",         flag:"🇬🇭",conf:"CAF",     group:"L",ranking:61},
+];
+
+var MATCHES = [
+  {id:"m1", home:"MEX",away:"RSA",date:"2026-06-11T20:00:00",venue:"Mexico City",   group:"A",stage:"Group Stage"},
+  {id:"m2", home:"KOR",away:"CZE",date:"2026-06-11T21:00:00",venue:"Zapopan",       group:"A",stage:"Group Stage"},
+  {id:"m3", home:"MEX",away:"KOR",date:"2026-06-15T21:00:00",venue:"Monterrey",     group:"A",stage:"Group Stage"},
+  {id:"m4", home:"CZE",away:"RSA",date:"2026-06-15T18:00:00",venue:"Kansas City",   group:"A",stage:"Group Stage"},
+  {id:"m5", home:"MEX",away:"CZE",date:"2026-06-19T21:00:00",venue:"Dallas",        group:"A",stage:"Group Stage"},
+  {id:"m6", home:"RSA",away:"KOR",date:"2026-06-19T21:00:00",venue:"Houston",       group:"A",stage:"Group Stage"},
+  {id:"m7", home:"CAN",away:"BIH",date:"2026-06-12T15:00:00",venue:"Toronto",       group:"B",stage:"Group Stage"},
+  {id:"m8", home:"QAT",away:"SUI",date:"2026-06-12T18:00:00",venue:"Los Angeles",   group:"B",stage:"Group Stage"},
+  {id:"m9", home:"CAN",away:"QAT",date:"2026-06-16T15:00:00",venue:"Vancouver",     group:"B",stage:"Group Stage"},
+  {id:"m10",home:"SUI",away:"BIH",date:"2026-06-16T21:00:00",venue:"Seattle",       group:"B",stage:"Group Stage"},
+  {id:"m11",home:"CAN",away:"SUI",date:"2026-06-20T21:00:00",venue:"Toronto",       group:"B",stage:"Group Stage"},
+  {id:"m12",home:"BIH",away:"QAT",date:"2026-06-20T21:00:00",venue:"Philadelphia",  group:"B",stage:"Group Stage"},
+  {id:"m13",home:"BRA",away:"MAR",date:"2026-06-13T15:00:00",venue:"Miami",         group:"C",stage:"Group Stage"},
+  {id:"m14",home:"SCO",away:"HAI",date:"2026-06-13T21:00:00",venue:"Boston",        group:"C",stage:"Group Stage"},
+  {id:"m15",home:"BRA",away:"SCO",date:"2026-06-17T21:00:00",venue:"New York/NJ",   group:"C",stage:"Group Stage"},
+  {id:"m16",home:"MAR",away:"HAI",date:"2026-06-17T18:00:00",venue:"Dallas",        group:"C",stage:"Group Stage"},
+  {id:"m17",home:"BRA",away:"HAI",date:"2026-06-21T21:00:00",venue:"Miami",         group:"C",stage:"Group Stage"},
+  {id:"m18",home:"MAR",away:"SCO",date:"2026-06-21T21:00:00",venue:"Los Angeles",   group:"C",stage:"Group Stage"},
+  {id:"m19",home:"USA",away:"PAR",date:"2026-06-12T21:00:00",venue:"Los Angeles",   group:"D",stage:"Group Stage"},
+  {id:"m20",home:"AUS",away:"TUR",date:"2026-06-12T18:00:00",venue:"Dallas",        group:"D",stage:"Group Stage"},
+  {id:"m21",home:"USA",away:"AUS",date:"2026-06-16T21:00:00",venue:"Houston",       group:"D",stage:"Group Stage"},
+  {id:"m22",home:"TUR",away:"PAR",date:"2026-06-16T18:00:00",venue:"Philadelphia",  group:"D",stage:"Group Stage"},
+  {id:"m23",home:"USA",away:"TUR",date:"2026-06-20T21:00:00",venue:"Seattle",       group:"D",stage:"Group Stage"},
+  {id:"m24",home:"PAR",away:"AUS",date:"2026-06-20T21:00:00",venue:"Kansas City",   group:"D",stage:"Group Stage"},
+  {id:"m25",home:"GER",away:"CUR",date:"2026-06-13T18:00:00",venue:"Philadelphia",  group:"E",stage:"Group Stage"},
+  {id:"m26",home:"CIV",away:"ECU",date:"2026-06-13T21:00:00",venue:"Boston",        group:"E",stage:"Group Stage"},
+  {id:"m27",home:"GER",away:"CIV",date:"2026-06-17T15:00:00",venue:"New York/NJ",   group:"E",stage:"Group Stage"},
+  {id:"m28",home:"ECU",away:"CUR",date:"2026-06-17T21:00:00",venue:"Seattle",       group:"E",stage:"Group Stage"},
+  {id:"m29",home:"GER",away:"ECU",date:"2026-06-21T21:00:00",venue:"Dallas",        group:"E",stage:"Group Stage"},
+  {id:"m30",home:"CIV",away:"CUR",date:"2026-06-21T21:00:00",venue:"Los Angeles",   group:"E",stage:"Group Stage"},
+  {id:"m31",home:"NED",away:"TUN",date:"2026-06-14T15:00:00",venue:"Houston",       group:"F",stage:"Group Stage"},
+  {id:"m32",home:"JPN",away:"SWE",date:"2026-06-14T21:00:00",venue:"Kansas City",   group:"F",stage:"Group Stage"},
+  {id:"m33",home:"NED",away:"JPN",date:"2026-06-18T21:00:00",venue:"Miami",         group:"F",stage:"Group Stage"},
+  {id:"m34",home:"SWE",away:"TUN",date:"2026-06-18T15:00:00",venue:"Boston",        group:"F",stage:"Group Stage"},
+  {id:"m35",home:"NED",away:"SWE",date:"2026-06-22T21:00:00",venue:"Los Angeles",   group:"F",stage:"Group Stage"},
+  {id:"m36",home:"TUN",away:"JPN",date:"2026-06-22T21:00:00",venue:"New York/NJ",   group:"F",stage:"Group Stage"},
+  {id:"m37",home:"BEL",away:"NZL",date:"2026-06-14T18:00:00",venue:"Seattle",       group:"G",stage:"Group Stage"},
+  {id:"m38",home:"IRN",away:"EGY",date:"2026-06-14T21:00:00",venue:"Kansas City",   group:"G",stage:"Group Stage"},
+  {id:"m39",home:"BEL",away:"IRN",date:"2026-06-18T21:00:00",venue:"Dallas",        group:"G",stage:"Group Stage"},
+  {id:"m40",home:"EGY",away:"NZL",date:"2026-06-18T18:00:00",venue:"Philadelphia",  group:"G",stage:"Group Stage"},
+  {id:"m41",home:"BEL",away:"EGY",date:"2026-06-22T21:00:00",venue:"Miami",         group:"G",stage:"Group Stage"},
+  {id:"m42",home:"IRN",away:"NZL",date:"2026-06-22T21:00:00",venue:"Boston",        group:"G",stage:"Group Stage"},
+  {id:"m43",home:"ESP",away:"CPV",date:"2026-06-15T15:00:00",venue:"Houston",       group:"H",stage:"Group Stage"},
+  {id:"m44",home:"URU",away:"KSA",date:"2026-06-15T21:00:00",venue:"Los Angeles",   group:"H",stage:"Group Stage"},
+  {id:"m45",home:"ESP",away:"URU",date:"2026-06-19T18:00:00",venue:"New York/NJ",   group:"H",stage:"Group Stage"},
+  {id:"m46",home:"KSA",away:"CPV",date:"2026-06-19T15:00:00",venue:"Seattle",       group:"H",stage:"Group Stage"},
+  {id:"m47",home:"ESP",away:"KSA",date:"2026-06-23T21:00:00",venue:"Miami",         group:"H",stage:"Group Stage"},
+  {id:"m48",home:"CPV",away:"URU",date:"2026-06-23T21:00:00",venue:"Philadelphia",  group:"H",stage:"Group Stage"},
+  {id:"m49",home:"FRA",away:"IRQ",date:"2026-06-16T18:00:00",venue:"Los Angeles",   group:"I",stage:"Group Stage"},
+  {id:"m50",home:"SEN",away:"NOR",date:"2026-06-16T21:00:00",venue:"Kansas City",   group:"I",stage:"Group Stage"},
+  {id:"m51",home:"FRA",away:"SEN",date:"2026-06-20T18:00:00",venue:"Dallas",        group:"I",stage:"Group Stage"},
+  {id:"m52",home:"NOR",away:"IRQ",date:"2026-06-20T15:00:00",venue:"Boston",        group:"I",stage:"Group Stage"},
+  {id:"m53",home:"FRA",away:"NOR",date:"2026-06-24T21:00:00",venue:"New York/NJ",   group:"I",stage:"Group Stage"},
+  {id:"m54",home:"IRQ",away:"SEN",date:"2026-06-24T21:00:00",venue:"Houston",       group:"I",stage:"Group Stage"},
+  {id:"m55",home:"ARG",away:"JOR",date:"2026-06-17T15:00:00",venue:"Miami",         group:"J",stage:"Group Stage"},
+  {id:"m56",home:"AUT",away:"ALG",date:"2026-06-17T21:00:00",venue:"Dallas",        group:"J",stage:"Group Stage"},
+  {id:"m57",home:"ARG",away:"AUT",date:"2026-06-21T15:00:00",venue:"Los Angeles",   group:"J",stage:"Group Stage"},
+  {id:"m58",home:"ALG",away:"JOR",date:"2026-06-21T18:00:00",venue:"Houston",       group:"J",stage:"Group Stage"},
+  {id:"m59",home:"ARG",away:"ALG",date:"2026-06-25T21:00:00",venue:"New York/NJ",   group:"J",stage:"Group Stage"},
+  {id:"m60",home:"JOR",away:"AUT",date:"2026-06-25T21:00:00",venue:"Boston",        group:"J",stage:"Group Stage"},
+  {id:"m61",home:"POR",away:"UZB",date:"2026-06-18T18:00:00",venue:"Seattle",       group:"K",stage:"Group Stage"},
+  {id:"m62",home:"COL",away:"COD",date:"2026-06-18T21:00:00",venue:"Los Angeles",   group:"K",stage:"Group Stage"},
+  {id:"m63",home:"POR",away:"COL",date:"2026-06-22T18:00:00",venue:"Boston",        group:"K",stage:"Group Stage"},
+  {id:"m64",home:"COD",away:"UZB",date:"2026-06-22T15:00:00",venue:"Kansas City",   group:"K",stage:"Group Stage"},
+  {id:"m65",home:"POR",away:"COD",date:"2026-06-26T21:00:00",venue:"Miami",         group:"K",stage:"Group Stage"},
+  {id:"m66",home:"UZB",away:"COL",date:"2026-06-26T21:00:00",venue:"Philadelphia",  group:"K",stage:"Group Stage"},
+  {id:"m67",home:"ENG",away:"PAN",date:"2026-06-19T21:00:00",venue:"Miami",         group:"L",stage:"Group Stage"},
+  {id:"m68",home:"CRO",away:"GHA",date:"2026-06-19T18:00:00",venue:"Houston",       group:"L",stage:"Group Stage"},
+  {id:"m69",home:"ENG",away:"CRO",date:"2026-06-23T21:00:00",venue:"Dallas",        group:"L",stage:"Group Stage"},
+  {id:"m70",home:"GHA",away:"PAN",date:"2026-06-23T18:00:00",venue:"Seattle",       group:"L",stage:"Group Stage"},
+  {id:"m71",home:"ENG",away:"GHA",date:"2026-06-27T21:00:00",venue:"New York/NJ",   group:"L",stage:"Group Stage"},
+  {id:"m72",home:"PAN",away:"CRO",date:"2026-06-27T21:00:00",venue:"Los Angeles",   group:"L",stage:"Group Stage"},
+  {id:"r32a",home:"1st A",away:"3rd B/E/F",  date:"2026-06-29T21:00:00",venue:"Dallas",       group:"",stage:"Round of 32"},
+  {id:"r32b",home:"1st B",away:"2nd F",       date:"2026-06-29T18:00:00",venue:"Los Angeles",  group:"",stage:"Round of 32"},
+  {id:"r32c",home:"1st C",away:"3rd A/D/G",   date:"2026-06-30T21:00:00",venue:"Houston",      group:"",stage:"Round of 32"},
+  {id:"r32d",home:"1st D",away:"2nd H",       date:"2026-06-30T18:00:00",venue:"Seattle",      group:"",stage:"Round of 32"},
+  {id:"r32e",home:"1st E",away:"3rd various", date:"2026-07-01T21:00:00",venue:"New York/NJ",  group:"",stage:"Round of 32"},
+  {id:"r32f",home:"1st F",away:"2nd D",       date:"2026-07-01T18:00:00",venue:"Miami",        group:"",stage:"Round of 32"},
+  {id:"r32g",home:"1st G",away:"3rd various", date:"2026-07-02T21:00:00",venue:"Philadelphia", group:"",stage:"Round of 32"},
+  {id:"r32h",home:"1st H",away:"2nd L",       date:"2026-07-02T18:00:00",venue:"Boston",       group:"",stage:"Round of 32"},
+  {id:"r32i",home:"1st I",away:"3rd various", date:"2026-07-03T21:00:00",venue:"Kansas City",  group:"",stage:"Round of 32"},
+  {id:"r32j",home:"1st J",away:"2nd B",       date:"2026-07-03T18:00:00",venue:"Los Angeles",  group:"",stage:"Round of 32"},
+  {id:"r32k",home:"1st K",away:"2nd A",       date:"2026-07-04T21:00:00",venue:"Dallas",       group:"",stage:"Round of 32"},
+  {id:"r32l",home:"1st L",away:"2nd J",       date:"2026-07-04T18:00:00",venue:"New York/NJ",  group:"",stage:"Round of 32"},
+  {id:"r32m",home:"2nd C",away:"2nd I",       date:"2026-07-05T21:00:00",venue:"Houston",      group:"",stage:"Round of 32"},
+  {id:"r32n",home:"2nd E",away:"2nd K",       date:"2026-07-05T18:00:00",venue:"Miami",        group:"",stage:"Round of 32"},
+  {id:"r32o",home:"2nd G",away:"3rd various", date:"2026-07-06T21:00:00",venue:"Seattle",      group:"",stage:"Round of 32"},
+  {id:"r32p",home:"2nd L",away:"3rd various", date:"2026-07-06T18:00:00",venue:"Philadelphia", group:"",stage:"Round of 32"},
+  {id:"r16a",home:"R32 W1", away:"R32 W2", date:"2026-07-09T18:00:00",venue:"Los Angeles",  group:"",stage:"Round of 16"},
+  {id:"r16b",home:"R32 W3", away:"R32 W4", date:"2026-07-09T21:00:00",venue:"Dallas",       group:"",stage:"Round of 16"},
+  {id:"r16c",home:"R32 W5", away:"R32 W6", date:"2026-07-10T18:00:00",venue:"New York/NJ",  group:"",stage:"Round of 16"},
+  {id:"r16d",home:"R32 W7", away:"R32 W8", date:"2026-07-10T21:00:00",venue:"Houston",      group:"",stage:"Round of 16"},
+  {id:"r16e",home:"R32 W9", away:"R32 W10",date:"2026-07-11T18:00:00",venue:"Miami",        group:"",stage:"Round of 16"},
+  {id:"r16f",home:"R32 W11",away:"R32 W12",date:"2026-07-11T21:00:00",venue:"Seattle",      group:"",stage:"Round of 16"},
+  {id:"r16g",home:"R32 W13",away:"R32 W14",date:"2026-07-12T18:00:00",venue:"Philadelphia", group:"",stage:"Round of 16"},
+  {id:"r16h",home:"R32 W15",away:"R32 W16",date:"2026-07-12T21:00:00",venue:"Boston",       group:"",stage:"Round of 16"},
+  {id:"qfa",home:"R16 W1",away:"R16 W2",date:"2026-07-15T18:00:00",venue:"Los Angeles",  group:"",stage:"Quarterfinal"},
+  {id:"qfb",home:"R16 W3",away:"R16 W4",date:"2026-07-15T21:00:00",venue:"Dallas",       group:"",stage:"Quarterfinal"},
+  {id:"qfc",home:"R16 W5",away:"R16 W6",date:"2026-07-16T18:00:00",venue:"New York/NJ",  group:"",stage:"Quarterfinal"},
+  {id:"qfd",home:"R16 W7",away:"R16 W8",date:"2026-07-16T21:00:00",venue:"Houston",      group:"",stage:"Quarterfinal"},
+  {id:"sfa",home:"QF W1",away:"QF W2",date:"2026-07-18T20:00:00",venue:"Dallas",      group:"",stage:"Semifinal"},
+  {id:"sfb",home:"QF W3",away:"QF W4",date:"2026-07-18T23:00:00",venue:"Los Angeles", group:"",stage:"Semifinal"},
+  {id:"3rd",home:"SF L1",away:"SF L2",date:"2026-07-18T16:00:00",venue:"Los Angeles", group:"",stage:"3rd Place"},
+  {id:"fin",home:"SF W1",away:"SF W2",date:"2026-07-19T20:00:00",venue:"MetLife Stadium, NJ",group:"",stage:"Final"},
+];
+
+// ════════════════════════════════════════════════════════════════
+// APP
+// ════════════════════════════════════════════════════════════════
+
+var PAGES = ["home","schedule","teams","groups","bracket"];
+var GROUPS_LIST = ["A","B","C","D","E","F","G","H","I","J","K","L"];
+var schedSort = 1;
+var TM = {};
+TEAMS.forEach(function(t){ TM[t.id] = t; });
+
+// ── Navigation ───────────────────────────────────────────────────
+function showPage(name) {
+  PAGES.forEach(function(p) {
+    document.getElementById("page-"+p).className = "page"+(p===name?" active":"");
+  });
+  document.querySelectorAll(".tab").forEach(function(b) {
+    b.classList.toggle("active", b.dataset.page===name);
+  });
+  if (history.replaceState) history.replaceState(null,"","#"+name);
+  if (name==="home")     renderHome();
+  if (name==="schedule") renderSchedule();
+  if (name==="teams")    renderTeams();
+  if (name==="groups")   renderGroups();
+  if (name==="bracket")  renderBracket();
+  window.scrollTo(0,0);
+}
+
+// ── Utilities ────────────────────────────────────────────────────
+function fmtDate(s){ return new Date(s).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}); }
+function fmtTime(s){ return new Date(s).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",timeZoneName:"short"}); }
+function countdown(s){
+  var d=new Date(s)-Date.now();
+  if(d<=0) return {label:"Completed",cls:"cd-p"};
+  var days=Math.floor(d/864e5),hrs=Math.floor((d%864e5)/36e5),mins=Math.floor((d%36e5)/6e4);
+  return {label:days>0?days+"d "+hrs+"h":hrs>0?hrs+"h "+mins+"m":mins+"m", cls:days>3?"cd-u":"cd-s"};
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function empty(icon,msg){ return '<div class="empty"><span class="eico">'+icon+'</span><p>'+msg+'</p></div>'; }
+
+// ── Broadcaster section ──────────────────────────────────────────
+function getBroadcasters(home, away) {
+  // Return per-team rows for any team with specific broadcaster data, else default
+  var rows = [];
+  [home, away].forEach(function(id) {
+    if (BROADCASTERS[id]) {
+      BROADCASTERS[id].forEach(function(b) { rows.push(b); });
+    }
+  });
+  return rows.length ? rows : BROADCASTERS.DEFAULT;
+}
+
+function renderChannels(home, away) {
+  var rows = getBroadcasters(home, away);
+  var langClass = {en:"ch-lang-en", es:"ch-lang-es", fr:"ch-lang-fr"};
+  var trs = rows.map(function(b) {
+    return '<tr>'+
+      '<td><span class="ch-flag">'+b.flag+'</span><span class="ch-name">'+esc(b.name)+'</span></td>'+
+      '<td><span class="'+(b.ch==="N/A"?"ch-na":"ch-num")+'">'+esc(b.ch)+'</span></td>'+
+      '<td><span class="ch-lang '+(langClass[b.lang]||"ch-lang-en")+'">'+b.lang.toUpperCase()+'</span></td>'+
+      '<td>'+(b.stream?'<span class="ch-stream">'+esc(b.stream)+'</span>':'-')+'</td>'+
+      '<td><a class="ch-link" href="'+b.url+'" target="_blank" rel="noopener">Watch ↗</a></td>'+
+    '</tr>';
+  }).join("");
+  return '<table class="ch-table">'+
+    '<thead><tr><th>Channel</th><th>Number</th><th>Lang</th><th>Stream</th><th>Link</th></tr></thead>'+
+    '<tbody>'+trs+'</tbody></table>';
+}
+
+// ── Pronostic section ────────────────────────────────────────────
+function renderPronostic(matchId, home, away) {
+  var p = PRONOSTICS[matchId];
+  if (!p) p = {winner:"TBD", conf:"Low", note:"No pronostic available for this match yet."};
+  var winnerTeam = TM[p.winner];
+  var winnerDisplay = p.winner === "TBD" ? "TBD" :
+                      p.winner === "Draw" ? "Draw" :
+                      (winnerTeam ? winnerTeam.flag+" "+winnerTeam.name : p.winner);
+  return '<div class="prono">'+
+    '<div class="prono-row">'+
+      '<div class="prono-winner">'+
+        '<span class="prono-label">Predicted winner</span>'+
+        '<span class="prono-value">'+winnerDisplay+'</span>'+
+      '</div>'+
+      '<span class="conf-pill conf-'+p.conf+'">'+p.conf+' confidence</span>'+
+    '</div>'+
+    '<div class="prono-note">'+esc(p.note)+'</div>'+
+    '<div class="prono-disclaimer">⚠ Pronostics are editorial opinions only, not official predictions or betting advice.</div>'+
+  '</div>';
+}
+
+// ── Hashtag section ──────────────────────────────────────────────
+function defaultHashtags(home, away, stage) {
+  var ht = TM[home], at = TM[away];
+  var code = (ht?home:"")+(at?away:"");
+  var stageTag = stage.replace(/\s+/g,"");
+  var base = ["#WorldCup2026","#FIFAWorldCup","#WorldCup"];
+  return {
+    twitter:  ["#"+code, "#WorldCup2026", "#FIFAWorldCup", "#"+stageTag].slice(0,5),
+    tiktok:   ["#"+code, "#WorldCup2026", "#FIFAWorldCup"].slice(0,4),
+    instagram:["#"+code, "#WorldCup2026", "#FIFAWorldCup", "#"+stageTag].slice(0,5),
+  };
+}
+
+function renderHashtags(matchId, home, away, stage) {
+  var tags = HASHTAGS[matchId] || defaultHashtags(home, away, stage);
+  var platforms = [
+    {icon:"𝕏", name:"X / Twitter", key:"twitter"},
+    {icon:"♪",  name:"TikTok",      key:"tiktok"},
+    {icon:"◻",  name:"Instagram",   key:"instagram"},
+  ];
+  return '<div class="htags">'+
+    platforms.map(function(p) {
+      var tagList = (tags[p.key]||[]).map(function(tag) {
+        return '<span class="htag">'+esc(tag)+'</span>';
+      }).join("");
+      return '<div class="htag-platform">'+
+        '<span class="htag-icon">'+p.icon+'</span>'+
+        '<span class="htag-name">'+p.name+'</span>'+
+        '<div class="htag-list">'+tagList+'</div>'+
+      '</div>';
+    }).join("")+
+  '</div>';
+}
+
+// ── Accordion section toggle ─────────────────────────────────────
+function toggleSection(btn) {
+  var body = btn.nextElementSibling;
+  var arrow = btn.querySelector(".mc-sec-arrow");
+  var isOpen = body.classList.contains("open");
+  body.classList.toggle("open", !isOpen);
+  arrow.style.transform = isOpen ? "" : "rotate(180deg)";
+}
+
+// ── Match card ───────────────────────────────────────────────────
+function matchCard(m) {
+  var ht=TM[m.home], at=TM[m.away];
+  var hname=ht?ht.name:m.home, aname=at?at.name:m.away;
+  var hflag=ht?ht.flag:"🏳️",   aflag=at?at.flag:"🏳️";
+  var hconf=ht?ht.conf:"",      aconf=at?at.conf:"";
+  var cd=countdown(m.date);
+  var badge=m.group?'<span class="bg">Group '+m.group+'</span>':'<span class="bg bstage">'+m.stage+'</span>';
+
+  var main = '<div class="mc-main">'+
+    '<div class="mmeta">'+badge+
+      '<span class="mdate">'+fmtDate(m.date)+' · '+fmtTime(m.date)+'</span>'+
+      '<span class="mven">📍 '+esc(m.venue)+'</span>'+
+    '</div>'+
+    '<div class="mteams">'+
+      '<div class="ts"><span class="tf">'+hflag+'</span><div class="ti"><div class="tn">'+esc(hname)+'</div><div class="tc">'+hconf+'</div></div></div>'+
+      '<div class="vsb"><span class="vs">VS</span><span class="cd '+cd.cls+'">'+cd.label+'</span></div>'+
+      '<div class="ts tsr"><span class="tf">'+aflag+'</span><div class="ti"><div class="tn">'+esc(aname)+'</div><div class="tc">'+aconf+'</div></div></div>'+
+    '</div>'+
+  '</div>';
+
+  var secId = m.id;
+  var sections = [
+    {title:"📺 Watch &amp; Channels", content: renderChannels(m.home, m.away)},
+    {title:"🎯 Pronostic",            content: renderPronostic(m.id, m.home, m.away)},
+    {title:"# Hashtags",              content: renderHashtags(m.id, m.home, m.away, m.stage)},
+  ];
+
+  var sectionsHtml = '<div class="mc-sections">'+
+    sections.map(function(s, i) {
+      return '<div class="mc-sec">'+
+        '<button class="mc-sec-hdr" onclick="toggleSection(this)" aria-expanded="false">'+
+          '<span class="mc-sec-title">'+s.title+'</span>'+
+          '<span class="mc-sec-arrow">▼</span>'+
+        '</button>'+
+        '<div class="mc-sec-body">'+s.content+'</div>'+
+      '</div>';
+    }).join("")+
+  '</div>';
+
+  return '<div class="mc">'+main+sectionsHtml+'</div>';
+}
+
+// ── Page renderers ───────────────────────────────────────────────
+function renderHome() {
+  var now=Date.now();
+  var up=MATCHES.filter(function(m){return new Date(m.date)>=now;})
+    .sort(function(a,b){return new Date(a.date)-new Date(b.date);}).slice(0,6);
+  document.getElementById("home-matches").innerHTML=
+    up.length?up.map(matchCard).join(""):empty("📅","Tournament complete.");
+}
+
+function renderSchedule() {
+  var q=document.getElementById("s-search").value.trim().toLowerCase();
+  var gr=document.getElementById("s-group").value;
+  var st=document.getElementById("s-stage").value;
+  var ms=MATCHES.filter(function(m){
+    if(gr&&m.group!==gr) return false;
+    if(st&&m.stage!==st) return false;
+    if(q){
+      var ht=TM[m.home],at=TM[m.away];
+      var hay=(ht?ht.name:"")+" "+(at?at.name:"")+" "+m.venue+" group "+m.group;
+      if(hay.toLowerCase().indexOf(q)===-1) return false;
+    }
+    return true;
+  }).slice().sort(function(a,b){return schedSort*(new Date(a.date)-new Date(b.date));});
+  document.getElementById("s-sort").textContent=schedSort===1?"↑ Date":"↓ Date";
+  document.getElementById("schedule-list").innerHTML=
+    ms.length?ms.map(matchCard).join(""):empty("🔍","No matches found.");
+}
+
+function renderTeams() {
+  var q=document.getElementById("t-search").value.trim().toLowerCase();
+  var cf=document.getElementById("t-conf").value;
+  var so=document.getElementById("t-sort").value;
+  var ts=TEAMS.filter(function(t){
+    if(cf&&t.conf!==cf) return false;
+    if(q&&t.name.toLowerCase().indexOf(q)===-1) return false;
+    return true;
+  }).slice().sort(function(a,b){
+    if(so==="ranking") return a.ranking-b.ranking;
+    if(so==="conf") return a.conf.localeCompare(b.conf)||a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name);
+  });
+  document.getElementById("teams-grid").innerHTML=ts.length
+    ?ts.map(function(t){
+        return '<div class="tcard" tabindex="0" onclick="teamCal(\''+t.id+'\')" onkeydown="if(event.key===\'Enter\')teamCal(\''+t.id+'\')">'+
+          '<div class="tfl">'+t.flag+'</div>'+
+          '<div class="tcn">'+esc(t.name)+'</div>'+
+          '<div class="tcm">Group '+t.group+' · #'+t.ranking+' FIFA</div>'+
+          '<span class="cb cb-'+t.conf+'">'+t.conf+'</span>'+
+        '</div>';
+      }).join("")
+    :empty("👥","No teams match.");
+}
+
+function renderGroups() {
+  var q=document.getElementById("gr-search").value.trim().toLowerCase();
+  var gl=GROUPS_LIST.filter(function(g){
+    if(!q) return true;
+    if(("group "+g).indexOf(q)!==-1) return true;
+    return TEAMS.some(function(t){return t.group===g&&t.name.toLowerCase().indexOf(q)!==-1;});
+  });
+  document.getElementById("groups-grid").innerHTML=gl.length
+    ?gl.map(function(g){
+        var gt=TEAMS.filter(function(t){return t.group===g;})
+          .slice().sort(function(a,b){return a.ranking-b.ranking;});
+        var rows=gt.map(function(t,i){
+          return '<tr class="'+(i<2?"row-adv":"")+'">'+
+            '<td><button class="tlink" onclick="teamCal(\''+t.id+'\')">'+
+              t.flag+' '+esc(t.name)+(i<2?' <span class="atick">✓</span>':'')+
+            '</button></td>'+
+            '<td class="cr"><span class="rchip">#'+t.ranking+'</span></td></tr>';
+        }).join("");
+        return '<div class="gcard"><div class="ghdr"><h3>GROUP '+g+'</h3></div>'+
+          '<table class="gtbl"><thead><tr><th>Team</th><th class="cr">FIFA #</th></tr></thead>'+
+          '<tbody>'+rows+'</tbody></table></div>';
+      }).join("")
+    :empty("🔍","No groups found.");
+}
+
+function renderBracket() {
+  var rounds=[
+    {l:"Round of 32",k:"Round of 32"},{l:"Round of 16",k:"Round of 16"},
+    {l:"Quarterfinals",k:"Quarterfinal"},{l:"Semifinals",k:"Semifinal"},
+    {l:"3rd Place",k:"3rd Place"},{l:"Final",k:"Final"},
+  ];
+  document.getElementById("bracket-inner").innerHTML=rounds.map(function(r){
+    var ms=MATCHES.filter(function(m){return m.stage===r.k;});
+    return '<div class="bround"><div class="brhdr">'+r.l+'</div><div class="bslots">'+
+      ms.map(function(m){
+        var ht=TM[m.home],at=TM[m.away];
+        return '<div class="bmatch">'+
+          '<div class="bteam'+(ht?"":" btbd")+'"><span class="bflag">'+(ht?ht.flag:"🏳️")+'</span><span class="bname">'+esc(ht?ht.name:m.home)+'</span></div>'+
+          '<div class="bteam'+(at?"":" btbd")+'"><span class="bflag">'+(at?at.flag:"🏳️")+'</span><span class="bname">'+esc(at?at.name:m.away)+'</span></div>'+
+        '</div>';
+      }).join("")+'</div></div>';
+  }).join("");
+}
+
+function teamCal(id) {
+  var t=TM[id];
+  if(t) document.getElementById("s-search").value=t.name;
+  showPage("schedule");
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll("[data-page]").forEach(function(el) {
+    el.addEventListener("click", function(){ showPage(el.dataset.page); });
+  });
+  var gsel=document.getElementById("s-group");
+  GROUPS_LIST.forEach(function(g){
+    var o=document.createElement("option"); o.value=g; o.textContent="Group "+g;
+    gsel.appendChild(o);
+  });
+  document.getElementById("s-search").addEventListener("input",renderSchedule);
+  document.getElementById("s-group").addEventListener("change",renderSchedule);
+  document.getElementById("s-stage").addEventListener("change",renderSchedule);
+  document.getElementById("s-sort").addEventListener("click",function(){ schedSort*=-1; renderSchedule(); });
+  document.getElementById("t-search").addEventListener("input",renderTeams);
+  document.getElementById("t-conf").addEventListener("change",renderTeams);
+  document.getElementById("t-sort").addEventListener("change",renderTeams);
+  document.getElementById("gr-search").addEventListener("input",renderGroups);
+  document.getElementById("g-search").addEventListener("input",function(){
+    var q=this.value.trim();
+    if(q.length<2) return;
+    var exact=TEAMS.filter(function(t){return t.name.toLowerCase()===q.toLowerCase();})[0];
+    if(exact){teamCal(exact.id);}else{document.getElementById("s-search").value=q;showPage("schedule");}
+  });
+  var h=window.location.hash.replace("#","");
+  showPage(PAGES.indexOf(h)!==-1?h:"home");
+});
+</script>
 </body>
 </html>
